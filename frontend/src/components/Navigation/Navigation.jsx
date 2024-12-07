@@ -1,46 +1,60 @@
+import React from "react";
+import { useModal } from "../../context/Modal"; // Correctly import from context
+import SignupFormModal from "../SignupFormModal";
+import LoginFormModal from "../LoginFormModal";
 
-import { NavLink } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import ProfileButton from './ProfileButton';
-import * as sessionActions from '../../store/session';
+function Navigation() {
+  const { setModalContent } = useModal(); // Use the modal context to open the modal
 
-function Navigation({ isLoaded }) {
-  const sessionUser = useSelector(state => state.session.user);
-  const dispatch = useDispatch();
-
-  const logout = (e) => {
-    e.preventDefault();
-    dispatch(sessionActions.logout());
+  const openLoginModal = () => {
+    setModalContent(<LoginFormModal />); // Open login modal
   };
 
-  const sessionLinks = sessionUser ? (
-    <>
-      <li>
-        <ProfileButton user={sessionUser} />
-      </li>
-      <li>
-        <button onClick={logout}>Log Out</button>
-      </li>
-    </>
-  ) : (
-    <>
-      <li>
-        <NavLink to="/login">Log In</NavLink>
-      </li>
-      <li>
-        <NavLink to="/signup">Sign Up</NavLink>
-      </li>
-    </>
-  );
+  const openSignupModal = () => {
+    setModalContent(<SignupFormModal />); // Open signup modal
+  };
 
   return (
-    <ul>
-      <li>
-        <NavLink to="/">Home</NavLink>
-      </li>
-      {isLoaded && sessionLinks}
-    </ul>
+    <nav>
+      <ul>
+        {/* <li>MyApp</li>
+        <li>About</li>
+        <li>Contact</li> */}
+        <li>
+          <button onClick={openLoginModal}>Log In</button>
+          <button onClick={openSignupModal}>Sign Up</button>
+        </li>
+      </ul>
+    </nav>
   );
 }
 
 export default Navigation;
+
+
+
+// import React from 'react';
+// import { useModal } from '../../context/Modal'; // Correctly import from context
+
+// function Navigation() {
+//   const { setModalContent } = useModal(); // Use the modal context to open the modal
+
+//   const openModal = () => {
+//     setModalContent(<div>Here's the modal content!</div>); // Set the modal content
+//   };
+
+//   return (
+//     <nav>
+//       <ul>
+//         <li>MyApp</li>
+//         <li>About</li>
+//         <li>Contact</li>
+//         <li>
+//           <button onClick={openModal}>Profile</button>
+//         </li>
+//       </ul>
+//     </nav>
+//   );
+// }
+
+// export default Navigation;
