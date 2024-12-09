@@ -1,5 +1,15 @@
-node_modules
+# Ignore environment variables
 .env
-build
-.DS_Store
-*.db
+
+# Ignore Python bytecode
+__pycache__/
+*.pyc
+
+# Ignore database files
+*.sqlite3
+
+# Ignore virtual environment
+venv/
+
+# Ignore Node modules (if applicable)
+node_modules/

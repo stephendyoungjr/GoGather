@@ -15,15 +15,37 @@
 - **POST** `/auth/signup`  
   Register a new user.
 
+  ```json
+  {
+    "username": "johndoe",
+    "email": "johndoe@example.com",
+    "password": "securepassword"
+  }
+  ```
+
 - **POST** `/auth/login`  
   Authenticate a user and return a token.
+
+  ```json
+  {
+    "credential": "johndoe@example.com",
+    "password": "securepassword"
+  }
+  ```
 
 - **POST** `/auth/logout`  
   Log out the user and invalidate their session.
 
+- **GET** `/auth/session`  
+  Get details of the currently logged-in user.
+
+---
+
 ### Events
 - **GET** `/events?category=:category`  
   Fetch events from Eventbrite API filtered by category.
+
+---
 
 ### Favorites
 - **GET** `/favorites`  
@@ -31,19 +53,50 @@
 
 - **POST** `/favorites`  
   Save a new favorite for the user.
+  ```json
+  {
+    "place_id": "ChIJN1t_tDeuEmsRUsoyG83frY4",
+    "name": "Sydney Opera House",
+    "category": "Landmark",
+    "notes": "Great view during sunset."
+  }
+  ```
 
 - **DELETE** `/favorites/:id`  
   Remove a favorite by its ID.
 
+---
+
 ### Reviews
+- **GET** `/reviews/current`  
+  Retrieve all reviews written by the current user.
+
 - **GET** `/reviews/:place_id`  
   Get all reviews for a specific event or place.
 
 - **POST** `/reviews`  
   Submit a new review.
+  ```json
+  {
+    "place_id": "ChIJN1t_tDeuEmsRUsoyG83frY4",
+    "rating": 5,
+    "comment": "Amazing experience!"
+  }
+  ```
+
+- **PUT** `/reviews/:id`  
+  Edit an existing review by its ID.
+  ```json
+  {
+    "rating": 4,
+    "comment": "Still great, but crowded."
+  }
+  ```
 
 - **DELETE** `/reviews/:id`  
   Remove a review by its ID.
+
+---
 
 ### Itineraries
 - **GET** `/itineraries`  
@@ -51,9 +104,54 @@
 
 - **POST** `/itineraries`  
   Create a new itinerary.
+  ```json
+  {
+    "name": "Vacation to Sydney",
+    "date": "2024-12-25"
+  }
+  ```
+
+- **PUT** `/itineraries/:id`  
+  Update an existing itinerary.
+  ```json
+  {
+    "name": "Sydney Getaway",
+    "date": "2024-12-26"
+  }
+  ```
 
 - **DELETE** `/itineraries/:id`  
   Delete an itinerary by its ID.
+
+---
+
+### Itinerary Items
+- **GET** `/itineraries/:itineraryId/items`  
+  Retrieve all items for a specific itinerary.
+
+- **POST** `/itineraries/:itineraryId/items`  
+  Add a new item to an itinerary.
+  ```json
+  {
+    "place_id": "ChIJN1t_tDeuEmsRUsoyG83frY4",
+    "name": "Sydney Opera House",
+    "start_time": "18:00:00",
+    "end_time": "20:00:00"
+  }
+  ```
+
+- **PUT** `/itinerary-items/:id`  
+  Edit an itinerary item.
+  ```json
+  {
+    "name": "Sydney Opera House Tour",
+    "start_time": "19:00:00",
+    "end_time": "21:00:00"
+  }
+  ```
+
+- **DELETE** `/itinerary-items/:id`  
+  Remove an itinerary item.
 
 ---
 
@@ -104,6 +202,3 @@
 
 5. **As a user, I want to:**
    - Manage my reviews and favorites easily from my profile page.
-
----
-
