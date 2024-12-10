@@ -7,6 +7,11 @@
 
 [db-schema]: ./images/dbschema.png
 
+## Wireframe
+
+![wireframe]
+
+[wireframe]: ./images/wireframe.png
 ---
 
 ## API Documentation
