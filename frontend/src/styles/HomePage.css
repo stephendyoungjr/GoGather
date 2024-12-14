@@ -1,0 +1,19 @@
+.home-page {
+    text-align: center;
+    padding: 2rem;
+}
+
+.home-page button {
+    margin: 1rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #4c6a79;
+    color: white;
+}
+
+.home-page button:hover {
+    background-color: #234a63;
+}

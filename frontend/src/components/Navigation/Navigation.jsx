@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
 import ProfileButton from "./ProfileButton";
-import '../../styles/Navigation';
+import '../../styles/Navigation.css';
 import warbnbLogo from '../../../public/warbnblogo.jpeg'
 
 
