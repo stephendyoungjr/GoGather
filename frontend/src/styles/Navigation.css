@@ -52,7 +52,7 @@ li {
 
 #home-nav *{
     /* border: solid 1px red; */
-    color: #234a63 !important;
+    color: #59b280 !important;
     align-items: center;
     display: flex;
     /* gap: 1em; */
@@ -63,7 +63,7 @@ li {
 }
 
 #site-icon *{
-    color: #234a63;
+    color: #59b280;
     height: auto;
     font-size: 2em;
 }

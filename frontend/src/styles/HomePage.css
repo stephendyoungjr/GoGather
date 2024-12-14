@@ -10,10 +10,10 @@
     cursor: pointer;
     border: none;
     border-radius: 5px;
-    background-color: #4c6a79;
+    background-color: #59b280;
     color: white;
 }
 
 .home-page button:hover {
-    background-color: #234a63;
+    background-color: #59b280;
 }
