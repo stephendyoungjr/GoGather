@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import Navigation from './components/Navigation/Navigation';
 import MainPage from './components/MainPage/MainPage';
 import EventPage from './components/EventPage/EventPage';
-import SearchPage from './components/SearchPage';
+import SearchPage from './components/SearchPage/SearchPage';
 import ProfilePage from './components/ProfilePage/ProfilePage';
 import Footer from './components/Footer/Footer';
 
