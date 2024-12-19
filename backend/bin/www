@@ -1,20 +1,29 @@
-
 require('dotenv').config();
 const { port } = require('../config');
-
 const app = require('../app');
 const db = require('../db/models');
 
-// Check the database connection before starting the app
-db.sequelize
-  .authenticate()
-  .then(() => {
-    console.log('Database connection success! Sequelize is ready to use...');
+// Log environment variables for debugging
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('DATABASE_URL:', process.env.DATABASE_URL);
 
-    // Start listening for connections
+// Function to handle the server start
+const startServer = async () => {
+  try {
+    // Authenticate database connection
+    await db.sequelize.authenticate();
+    console.log('Database connection successful! Sequelize is ready to use...');
+    
+    // Start the app server
     app.listen(port, () => console.log(`Listening on port ${port}...`));
-  })
-  .catch((err) => {
-    console.log('Database connection failure.');
-    console.error(err);
-  });
+  } catch (err) {
+    console.error('Database connection failed:', err.message);
+    process.exit(1); // Exit with an error if the database connection fails
+  }
+};
+
+// Check if the port is available and start the server
+startServer().catch((err) => {
+  console.error('Unexpected error during server startup:', err.message);
+  process.exit(1); // Exit with an error for unexpected startup issues
+});

@@ -1,50 +1,45 @@
 const express = require('express');
 require('dotenv').config();
-const morgan = require('morgan'); // Logs info about server req/res
-const cors = require('cors'); // Cross-Origin Resource Sharing middleware
-const csurf = require('csurf'); // CSRF protection middleware
-const cookieParser = require('cookie-parser'); // Parses cookies
-const helmet = require('helmet'); // Security middleware
+const morgan = require('morgan');
+const cors = require('cors');
+const csurf = require('csurf');
+const cookieParser = require('cookie-parser');
+const helmet = require('helmet');
 const { ValidationError } = require('sequelize');
-const routes = require('./routes/index'); // Import routes
-const { environment } = require('./config/index'); // Get environment
+const routes = require('./routes/index');
+const { environment } = require('./config');
 
-const isProduction = environment === 'production'; // Check if environment is production
+const isProduction = environment === 'production';
 
-const app = express(); // Initialize Express application
+const app = express();
 
-// Middleware setup
-app.use(morgan('dev')); // Log HTTP requests in development mode
-app.use(cookieParser()); // Parse cookies
-app.use(express.json()); // Parse JSON bodies from application/json requests
+app.use(morgan('dev'));
+app.use(cookieParser());
+app.use(express.json());
 
-// Security Middleware
 if (!isProduction) {
-  app.use(cors()); // Enable CORS only in development
+  app.use(cors());
 }
 
 app.use(
   helmet({
-    contentSecurityPolicy: false, // Disable CSP for simplicity; configure as needed
+    contentSecurityPolicy: false,
   })
 );
 
 app.use(
   csurf({
     cookie: {
-      secure: isProduction, // Use secure cookies in production
-      sameSite: isProduction && 'Lax', // SameSite policy in production
-      httpOnly: true, // Prevent JavaScript access to the CSRF cookie
+      secure: isProduction,
+      sameSite: isProduction && 'Lax',
+      httpOnly: true,
     },
   })
 );
 
-// Routes
 app.use(routes);
 
-// Error Handlers
-
-// Catch unhandled requests and forward to error handler
+// Error handling
 app.use((_req, _res, next) => {
   const err = new Error("The requested resource couldn't be found.");
   err.title = 'Resource Not Found';
@@ -53,7 +48,6 @@ app.use((_req, _res, next) => {
   next(err);
 });
 
-// Process Sequelize errors
 app.use((err, _req, _res, next) => {
   if (err instanceof ValidationError) {
     err.errors = err.errors.map((e) => e.message);
@@ -62,7 +56,6 @@ app.use((err, _req, _res, next) => {
   next(err);
 });
 
-// Error formatter
 app.use((err, _req, res, _next) => {
   res.status(err.status || 500);
   console.error(err);
