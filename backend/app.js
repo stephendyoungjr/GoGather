@@ -1,75 +1,77 @@
 const express = require('express');
-const morgan = require('morgan'); // logs info about server req/res
-const cors = require('cors'); // cross origin resource sharing mw
-const csurf = require('csurf'); // CSRF protection mw
-const cookieParser = require('cookie-parser'); // parses cookies (for csrf)
-const helmet = require('helmet'); // security mw
+require('dotenv').config();
+const morgan = require('morgan'); // Logs info about server req/res
+const cors = require('cors'); // Cross-Origin Resource Sharing middleware
+const csurf = require('csurf'); // CSRF protection middleware
+const cookieParser = require('cookie-parser'); // Parses cookies
+const helmet = require('helmet'); // Security middleware
 const { ValidationError } = require('sequelize');
+const routes = require('./routes/index'); // Import routes
+const { environment } = require('./config/index'); // Get environment
 
-const routes = require('./routes/index')
-const { environment } = require('./config/index'); // get environment
-const isProduction = environment === 'production'; // boolean checking whether being run in dev or prod
+const isProduction = environment === 'production'; // Check if environment is production
 
-const app = express() // init Express application
+const app = express(); // Initialize Express application
 
-  app.use(morgan('dev')) // connect morgan mw to log info about req/res
-  app.use(cookieParser()); // add CP mw to parse cookies
-  app.use(express.json()); // add express.json mw to parse JSON bodies from app/json requests
+// Middleware setup
+app.use(morgan('dev')); // Log HTTP requests in development mode
+app.use(cookieParser()); // Parse cookies
+app.use(express.json()); // Parse JSON bodies from application/json requests
 
-// ---- Security Middleware ------ //
+// Security Middleware
+if (!isProduction) {
+  app.use(cors()); // Enable CORS only in development
+}
 
-  // enable cors only in dev; CORS not a problem in React prod env
-  if(isProduction) app.use(cors())
+app.use(
+  helmet({
+    contentSecurityPolicy: false, // Disable CSP for simplicity; configure as needed
+  })
+);
 
-  // helmet helps set a variety of headers to better secure the app
-  app.use(helmet({ contentSecurityPolicy: false }))
+app.use(
+  csurf({
+    cookie: {
+      secure: isProduction, // Use secure cookies in production
+      sameSite: isProduction && 'Lax', // SameSite policy in production
+      httpOnly: true, // Prevent JavaScript access to the CSRF cookie
+    },
+  })
+);
 
-  // Set the _csrf token and create req.csrfToken method. The csurf middleware will add a _csrf cookie that is HTTP-only (can't be read by JavaScript) to any server response. It also adds a method on all requests (req.csrfToken) that will be set to another cookie (XSRF-TOKEN) later on. These two cookies work together to provide CSRF (Cross-Site Request Forgery) protection for your application.
-  app.use(
-    csurf({
-      cookie: {
-        secure: isProduction,
-        sameSite: isProduction && 'Lax',
-        httpOnly: true,
-      }
-    })
-  )
-// ------------------------------------
+// Routes
+app.use(routes);
 
-  app.use(routes) // connect app to routes, with all other middleware in place
+// Error Handlers
 
-// ------- Error handlers -------------
+// Catch unhandled requests and forward to error handler
+app.use((_req, _res, next) => {
+  const err = new Error("The requested resource couldn't be found.");
+  err.title = 'Resource Not Found';
+  err.errors = ["The requested resource couldn't be found."];
+  err.status = 404;
+  next(err);
+});
 
-  // Catch unhandled requests and forward to error handler.
-  app.use((_req, _res, next) => {
-    const err = new Error("The requested resource couldn't be found.");
-    err.title = "Resource Not Found";
-    err.errors = ["The requested resource couldn't be found."];
-    err.status = 404;
-    next(err);
+// Process Sequelize errors
+app.use((err, _req, _res, next) => {
+  if (err instanceof ValidationError) {
+    err.errors = err.errors.map((e) => e.message);
+    err.title = 'Validation error';
+  }
+  next(err);
+});
+
+// Error formatter
+app.use((err, _req, res, _next) => {
+  res.status(err.status || 500);
+  console.error(err);
+  res.json({
+    title: err.title || 'Server Error',
+    message: err.message,
+    errors: err.errors,
+    stack: isProduction ? null : err.stack,
   });
-
-  // Process sequelize errors
-  app.use((err, _req, _res, next) => {
-    // check if error is a Sequelize error:
-    if (err instanceof ValidationError) {
-      err.errors = err.errors.map((e) => e.message);
-      err.title = 'Validation error';
-    }
-    next(err);
-  });
-
-  // Error formatter
-  app.use((err, _req, res, _next) => {
-    res.status(err.status || 500);
-    console.error(err);
-    res.json({
-      title: err.title || 'Server Error',
-      message: err.message,
-      errors: err.errors,
-      stack: isProduction ? null : err.stack,
-    });
-  });
-
+});
 
 module.exports = app;
