@@ -17,6 +17,10 @@ app.use(morgan('dev'));
 app.use(cookieParser());
 app.use(express.json());
 
+// Serve static files from the 'public' directory
+const path = require('path');
+app.use('/public', express.static(path.join(__dirname, 'public')));
+
 if (!isProduction) {
   app.use(cors());
 }
