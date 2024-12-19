@@ -6,7 +6,6 @@ import { searchEvents } from '../../store/events';
 function SearchForm() {
   const dispatch = useDispatch();
   const history = useHistory();
-
   const [query, setQuery] = useState('');
 
   const handleSubmit = (e) => {
@@ -18,7 +17,7 @@ function SearchForm() {
   return (
     <div>
       <form className="search-bar-form" onSubmit={handleSubmit}>
-        <img className="search-image" alt="mag-glass" src="/default-search-icon.png" />
+        <i className="fas fa-search search-image"></i> {/* Font Awesome Search Icon */}
         <input
           className="search-bar-input"
           type="text"

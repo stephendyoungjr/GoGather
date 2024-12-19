@@ -3,7 +3,7 @@
 .event-card-image, .event-image, .event-image-container {
   object-fit: cover;
   width: 100%;
-  max-height: 100%;
+  height: 100%; /* Changed max-height to height */
 }
 
 .event-body-container {
@@ -150,8 +150,10 @@ body {
   grid-area: profile-events;
   width: 100%;
   height: 85%;
+  overflow-y: auto; /* Added scrolling for events */
 }
-.profile-events-container ::-webkit-scrollbar {
+
+.profile-events-container::-webkit-scrollbar {
   display: none;
 }
 
@@ -281,10 +283,10 @@ button:hover {
 
 .event-card {
   display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: flex-start;
-  height: 250px;
+  flex-direction: column; /* Adjusted to better fit images and details */
+  justify-content: flex-start;
+  align-items: center;
+  height: 300px;
   width: 250px;
   margin: 20px;
   padding: 0px;
@@ -292,6 +294,7 @@ button:hover {
   position: relative;
   transition: box-shadow 500ms;
   box-shadow: 1px 1px 10px 1px #D3D3D3;
+  overflow: hidden; /* Prevent content overflow */
 }
 
 .event-card-details {
@@ -316,12 +319,14 @@ button:hover {
 .event-card-image-container {
   grid-area: "image";
   background-color: #59B280;
-  height: 110px;
+  height: 150px; /* Adjusted height for better fit */
 }
 
 .event-card-image {
   grid-area: "image";
-  background-color: #59B280;
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
 }
 
 .event-card:hover {
@@ -377,11 +382,10 @@ button:hover {
   display: flex;
   flex-direction: row;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .user-event-card-image-container {
-  grid-area: "image";
   background-color: #59B280;
   object-fit: cover;
   width: 100%;
