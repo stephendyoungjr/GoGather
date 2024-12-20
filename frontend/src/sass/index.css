@@ -253,17 +253,19 @@ button:hover {
 
 /* CATEGORY BAR */
 .category-bar {
-  height: 5vh;
-}
-
-.category-bar > a {
-  color: #3D64FF;
+  display: flex; 
+  flex-direction: row; 
+  justify-content: center; 
+  align-items: center;
+  gap: 15px; 
+  margin-bottom: 20px; 
+  height: auto; 
 }
 
 .category {
   cursor: pointer;
   font-weight: lighter;
-  color: rgb(165, 160, 160);
+  color: #a5a0a0;
   transition: font-size 500ms, border-bottom 500ms, color 500ms;
   padding-bottom: 5px;
   font-size: 14px;
@@ -274,6 +276,7 @@ button:hover {
   color: #3D64FF;
   border-bottom: 1px solid #3D64FF;
 }
+
 
 /* EVENT CARD */
 .events-container {
@@ -303,11 +306,23 @@ button:hover {
   box-shadow: 1px 1px 10px 1px #D3D3D3;
 }
 
-.event-card-details {
-  text-align: left;
-  padding: 10px 15px 0 15px;
-  font-size: 14px;
+.event-card-details p {
+  font-size: clamp(12px, 1.5vw, 14px); /* Minimum font size: 12px, maximum: 14px */
+  margin: 5px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
+
+
+.event-card-details p {
+  font-size: clamp(12px, 1.5vw, 14px); /* Minimum font size: 12px, maximum: 14px */
+  margin: 5px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 
 .fav-icon {
   transform: scale(0.4);
@@ -335,11 +350,10 @@ button:hover {
 }
 
 .event-card-title {
-  color: #39364F;
   font-weight: bold;
   text-transform: capitalize;
-  height: 20px;
-  padding-bottom: 1em;
+  font-size: 16px; 
+  margin-bottom: 0.5em;
 }
 
 /* USER EVENT CARD */

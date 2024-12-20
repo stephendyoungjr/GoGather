@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-
 const { jwtConfig } = require('../config');
 const { User } = require('../db/models');
 
@@ -7,11 +6,10 @@ const { secret, expiresIn } = jwtConfig;
 
 // Sets and sends a JWT Cookie
 const setTokenCookie = (res, user) => {
-  // Create the token
   const token = jwt.sign(
     { data: user.toSafeObject() },
     secret,
-    { expiresIn: parseInt(expiresIn)}, // 604,800 seconds = 1 week
+    { expiresIn: parseInt(expiresIn) } // 604,800 seconds = 1 week
   );
 
   const isProduction = process.env.NODE_ENV === "production";
@@ -29,32 +27,52 @@ const setTokenCookie = (res, user) => {
 
 // Restore the session user info based on the contents of the JWT cookie
 const restoreUser = (req, res, next) => {
-  // token parsed from cookies
   const { token } = req.cookies;
 
-  return jwt.verify(token, secret, null, async (err, jwtPayload) => {
-    if (err) return next();
+  if (!token) {
+    console.log("No token found in cookies.");
+    req.user = null;
+    return next();
+  }
 
-    try {
-      const { id } = jwtPayload.data; // if user found
-      req.user = await User.scope('currentUser').findByPk(id); // save user info on req
-    } catch (e) {
-      res.clearCookie('token'); // else clear the token
+  return jwt.verify(token, secret, null, async (err, jwtPayload) => {
+    if (err) {
+      console.log("JWT verification failed:", err.message);
+      req.user = null;
       return next();
     }
 
-    if (!req.user) res.clearCookie('token');
+    try {
+      const { id } = jwtPayload.data;
+      const user = await User.scope('currentUser').findByPk(id);
+      if (!user) {
+        console.log("No user found with ID:", id);
+        res.clearCookie('token');
+        req.user = null;
+        return next();
+      }
+      req.user = user;
+      console.log("User restored:", user.toJSON());
+    } catch (e) {
+      console.log("Error restoring user:", e.message);
+      res.clearCookie('token');
+      req.user = null;
+    }
 
     return next();
   });
 };
 
-// 1st restore user, then continue to the next req; else, return err
+// Require authentication middleware
 const requireAuth = [
   restoreUser,
-  function (req, res, next) {
-    if (req.user) return next();
+  (req, res, next) => {
+    if (req.user) {
+      console.log("User is authenticated:", req.user.toJSON());
+      return next();
+    }
 
+    console.log("Unauthorized access attempted.");
     const err = new Error('Unauthorized');
     err.title = 'Unauthorized';
     err.errors = ['Unauthorized'];
@@ -62,4 +80,5 @@ const requireAuth = [
     return next(err);
   },
 ];
- module.exports = { setTokenCookie, restoreUser, requireAuth };
+
+module.exports = { setTokenCookie, restoreUser, requireAuth };

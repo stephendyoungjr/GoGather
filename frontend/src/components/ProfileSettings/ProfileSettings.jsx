@@ -1,13 +1,16 @@
 import React from 'react';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const ProfileSettings = ({ username, email }) => {
   return (
     <>
       <div className="profile-image-container">
-        <img
-          alt="Profile"
-          className="profile-image"
-          src="/default-profile-icon.png"
+        {/* Replace the img tag with an icon from Material UI */}
+        <AccountCircleIcon
+          style={{
+            fontSize: '150px', // Adjust size
+            color: '#ccc', // Adjust color
+          }}
         />
       </div>
       <div
@@ -29,3 +32,4 @@ const ProfileSettings = ({ username, email }) => {
 };
 
 export default ProfileSettings;
+

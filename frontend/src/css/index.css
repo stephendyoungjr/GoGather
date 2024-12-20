@@ -3,7 +3,7 @@
 .event-card-image, .event-image, .event-image-container {
   object-fit: cover;
   width: 100%;
-  height: 100%; /* Changed max-height to height */
+  height: 120px; /* Reduced height to create more space */
 }
 
 .event-body-container {
@@ -25,6 +25,17 @@ body {
   grid-template-areas: ". nav ." ". body ." ". foot .";
   height: 100vh;
   width: 100vw;
+}
+
+.events-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 20px auto;
+  margin-right: 0.5rem; /* Adjust spacing as needed */
+  
 }
 
 .nav {
@@ -150,7 +161,7 @@ body {
   grid-area: profile-events;
   width: 100%;
   height: 85%;
-  overflow-y: auto; /* Added scrolling for events */
+  overflow-y: auto;
 }
 
 .profile-events-container::-webkit-scrollbar {
@@ -218,12 +229,26 @@ button {
   margin-top: 20px;
   transition: background-color 500ms, border 500ms, color 500ms;
 }
-
-button:hover {
-  background-color: #59B280;
-  border: 2px solid white;
-  color: white;
+button.favorite-btn {
+  position: absolute;
+  top: 10px; /* Adjust as necessary */
+  right: 10px;
+  z-index: 2; /* Ensure it appears above other elements */
+  background: none;
+  border: none;
+  cursor: pointer;
 }
+
+button.favorite-btn .heart-icon {
+  font-size: 20px; /* Adjust size */
+  color: #d3d3d3; /* Default color */
+  transition: color 0.3s ease;
+}
+
+button.favorite-btn.favorited .heart-icon {
+  color: #ff6b6b; /* Red for favorited state */
+}
+
 
 .nav-link {
   color: #195525;
@@ -246,11 +271,14 @@ button:hover {
 
 /* CATEGORY BAR */
 .category-bar {
-  height: 5vh;
-}
-
-.category-bar > a {
-  color: #3D64FF;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 100%;
+  margin: 20px 0;
+  padding: 10px 0;
+  background-color: #f8f8f8;
 }
 
 .category {
@@ -258,14 +286,15 @@ button:hover {
   font-weight: lighter;
   color: #a5a0a0;
   transition: font-size 500ms, border-bottom 500ms, color 500ms;
-  padding-bottom: 5px;
-  font-size: 14px;
+  padding: 5px 10px;
+  font-size: 16px;
+  text-align: center;
 }
 
 .category:hover {
-  font-size: 15px;
+  font-size: 17px;
   color: #3D64FF;
-  border-bottom: 1px solid #3D64FF;
+  border-bottom: 2px solid #3D64FF;
 }
 
 /* EVENT CARD */
@@ -283,10 +312,10 @@ button:hover {
 
 .event-card {
   display: flex;
-  flex-direction: column; /* Adjusted to better fit images and details */
+  flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  height: 300px;
+  height: 280px; /* Reduced height to balance layout */
   width: 250px;
   margin: 20px;
   padding: 0px;
@@ -294,20 +323,36 @@ button:hover {
   position: relative;
   transition: box-shadow 500ms;
   box-shadow: 1px 1px 10px 1px #D3D3D3;
-  overflow: hidden; /* Prevent content overflow */
+  overflow: hidden;
 }
 
 .event-card-details {
-  text-align: left;
-  padding: 10px 15px 0px 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 10px 15px;
   font-size: 14px;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+  height: 100%;
+}
+
+.event-card-details p {
+  margin: 5px 0;
+  font-size: 13px;
+  overflow: hidden;
+  white-space: normal;
+  word-wrap: break-word;
 }
 
 .fav-icon {
   transform: scale(0.4);
   position: absolute;
-  right: -20px;
-  bottom: 90px;
+  right: 10px;
+  bottom: 10px;
   cursor: pointer;
   transition: transform 300ms;
 }
@@ -319,7 +364,7 @@ button:hover {
 .event-card-image-container {
   grid-area: "image";
   background-color: #59B280;
-  height: 150px; /* Adjusted height for better fit */
+  height: 120px; /* Reduced height to balance layout */
 }
 
 .event-card-image {
@@ -334,11 +379,17 @@ button:hover {
 }
 
 .event-card-title {
-  color: #39364F;
   font-weight: bold;
-  text-transform: capitalize;
-  height: 20px;
-  padding-bottom: 1em;
+  font-size: 15px;
+  margin-bottom: 0.5em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.event-card-details {
+  height: 120px;
+  overflow-y: auto;
 }
 
 /* USER EVENT CARD */
@@ -396,7 +447,7 @@ button:hover {
   box-shadow: 3px 3px 20px 5px #D3D3D3;
 }
 
-/* SEARCH BAR  */
+/* SEARCH BAR */
 .search-bar-form {
   display: flex;
   justify-content: flex-start;
@@ -407,7 +458,6 @@ button:hover {
   padding: 0px;
   margin: 0px;
   text-align: center;
-  /* border-radius: 5px; */
 }
 
 .search-image {
@@ -461,4 +511,14 @@ button:hover {
 
 .scale {
   transform: scale(0.8);
+}
+.event-card-link {
+  text-decoration: none; /* Remove underline */
+  color: inherit; /* Inherit the parent element's color */
+}
+
+.event-card-link:hover,
+.event-card-link:focus {
+  text-decoration: underline; /* Add underline on hover or focus */
+  color: #234a63; /* Optional: Set hover/focus color */
 }
