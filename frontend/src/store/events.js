@@ -1,7 +1,7 @@
+/* events.js */
 import { csrfFetch } from '../store/csrf';
 
 /* ACTION VERBS */
-
 const LOAD_EVENTS = 'events/LOAD_EVENTS';
 const LOAD_REGISTERED = 'events/LOAD_REGISTERED';
 const LOAD_FAVORITES = 'events/LOAD_FAVORITES';
@@ -10,53 +10,56 @@ const REGISTER = 'events/REGISTER';
 const FAVORITE = 'events/FAVORITE';
 const UNREGISTER = 'events/UNREGISTER';
 const UNFAVORITE = 'events/UNFAVORITE';
+const CREATE_EVENT = 'events/CREATE_EVENT';
 
 /* ACTION CREATORS */
+const createEvent = (event) => ({
+  type: CREATE_EVENT,
+  event,
+});
 
-const loadEvents = events => ({
+const loadEvents = (events) => ({
   type: LOAD_EVENTS,
   events,
 });
 
-const loadRegistered = registered => ({
+const loadRegistered = (registered) => ({
   type: LOAD_REGISTERED,
   registered,
 });
 
-const loadFavorites = favorites => ({
+const loadFavorites = (favorites) => ({
   type: LOAD_FAVORITES,
   favorites,
 });
 
-const register = event => ({
+const register = (event) => ({
   type: REGISTER,
   event,
 });
 
-const favorite = event => ({
+const favorite = (event) => ({
   type: FAVORITE,
   event,
 });
 
-const unregister = eventId => ({
+const unregister = (eventId) => ({
   type: UNREGISTER,
   eventId,
 });
 
-const unfavorite = eventId => ({
+const unfavorite = (eventId) => ({
   type: UNFAVORITE,
   eventId,
 });
 
-const loadSearchResults = results => ({
+const loadSearchResults = (results) => ({
   type: LOAD_SEARCH_RESULTS,
   results,
 });
 
 /* GET THUNKS */
-
-//GET all events
-export const getEvents = () => async dispatch => {
+export const getEvents = () => async (dispatch) => {
   const response = await fetch(`/api/events/`);
 
   if (response.ok) {
@@ -65,8 +68,7 @@ export const getEvents = () => async dispatch => {
   }
 };
 
-// GET registered events
-export const getRegistered = () => async dispatch => {
+export const getRegistered = () => async (dispatch) => {
   const response = await fetch(`/api/events/registrations`);
 
   if (response.ok) {
@@ -75,8 +77,7 @@ export const getRegistered = () => async dispatch => {
   }
 };
 
-// GET favorite events
-export const getFavorites = () => async dispatch => {
+export const getFavorites = () => async (dispatch) => {
   const response = await fetch(`/api/events/favorites`);
 
   if (response.ok) {
@@ -85,16 +86,14 @@ export const getFavorites = () => async dispatch => {
   }
 };
 
-
 /* POST THUNKS */
-// POST add new registration to Registration table
-export const registerEvent = (payload) => async dispatch => {
+export const registerEvent = (payload) => async (dispatch) => {
   const eventId = payload.id;
   const ticketCount = parseInt(payload.ticketCount, 10);
 
   const response = await csrfFetch(`/api/events/${eventId}/registration`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json'},
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ ticketCount }),
   });
 
@@ -104,13 +103,12 @@ export const registerEvent = (payload) => async dispatch => {
   }
 };
 
-// POST add new favorite to users favorites
-export const favoriteEvent = (payload) => async dispatch => {
+export const favoriteEvent = (payload) => async (dispatch) => {
   const eventId = payload.id;
 
   const response = await csrfFetch(`/api/events/${eventId}/favorite`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json'},
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ eventId }),
   });
 
@@ -120,13 +118,11 @@ export const favoriteEvent = (payload) => async dispatch => {
   }
 };
 
-
-// POST search for events
-export const searchEvents = (query) => async dispatch => {
+export const searchEvents = (query) => async (dispatch) => {
   const response = await csrfFetch(`/api/events/search`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json'},
-    body: JSON.stringify({query}),
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ query }),
   });
 
   if (response.ok) {
@@ -135,14 +131,24 @@ export const searchEvents = (query) => async dispatch => {
   }
 };
 
+export const createNewEvent = (payload) => async (dispatch) => {
+  const response = await csrfFetch('/api/events/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
 
+  if (response.ok) {
+    const newEvent = await response.json();
+    dispatch(createEvent(newEvent));
+    return newEvent;
+  }
+};
 
 /* DELETE THUNKS */
-
-// DELETE registered events
-export const unregisterEvent = (eventId) => async dispatch => {
+export const unregisterEvent = (eventId) => async (dispatch) => {
   const response = await csrfFetch(`/api/events/${eventId}/registration`, {
-    method: 'DELETE'
+    method: 'DELETE',
   });
 
   if (response.ok) {
@@ -151,10 +157,9 @@ export const unregisterEvent = (eventId) => async dispatch => {
   }
 };
 
-// DELETE favorite events
-export const unfavoriteEvent = (eventId) => async dispatch => {
+export const unfavoriteEvent = (eventId) => async (dispatch) => {
   const response = await csrfFetch(`/api/events/${eventId}/favorites`, {
-    method: 'DELETE'
+    method: 'DELETE',
   });
 
   if (response.ok) {
@@ -163,9 +168,7 @@ export const unfavoriteEvent = (eventId) => async dispatch => {
   }
 };
 
-
 /* EVENT REDUCER */
-
 const initialState = {
   eventsList: [],
   registered: [],
@@ -179,7 +182,7 @@ const eventsReducer = (state = initialState, action) => {
   switch (action.type) {
     case LOAD_EVENTS: {
       const allEvents = {};
-      action.events.forEach(event => {
+      action.events.forEach((event) => {
         allEvents[event.id] = event;
       });
       return {
@@ -191,54 +194,57 @@ const eventsReducer = (state = initialState, action) => {
     case LOAD_REGISTERED: {
       return {
         ...state,
-        registered: action.registered
+        registered: action.registered,
       };
     }
     case LOAD_FAVORITES: {
       return {
         ...state,
-        favorites: action.favorites
+        favorites: action.favorites,
       };
     }
     case LOAD_SEARCH_RESULTS: {
       return {
         ...state,
-        searchResults: action.results
+        searchResults: action.results,
       };
     }
     case REGISTER: {
-      newState = {...state}
-      const newRegistered = [...newState.registered, action.event]
+      newState = { ...state };
+      const newRegistered = [...newState.registered, action.event];
       newState.registered = newRegistered;
       return newState;
     }
     case FAVORITE: {
-      newState = {...state}
-      const newFavorites = [...newState.favorites, action.event]
+      newState = { ...state };
+      const newFavorites = [...newState.favorites, action.event];
       newState.favorites = newFavorites;
       return newState;
     }
     case UNREGISTER: {
-      newState = {...state}; // copy state into new obj
-
-      // update registered list by filtering for all BUT the unregistered event id
-      const newRegistered = newState.registered.filter(event => event.id.toString() !== action.eventId.toString());
-
+      newState = { ...state };
+      const newRegistered = newState.registered.filter(
+        (event) => event.id.toString() !== action.eventId.toString()
+      );
       newState.registered = newRegistered;
       return newState;
     }
     case UNFAVORITE: {
-      newState = {...state}; // copy state into new obj
-
-      // update registered list by filtering for all BUT the unregistered event id
-      const newFavorites = newState.favorites.filter(event => event.id.toString() !== action.eventId.toString());
-
+      newState = { ...state };
+      const newFavorites = newState.favorites.filter(
+        (event) => event.id.toString() !== action.eventId.toString()
+      );
       newState.favorites = newFavorites;
+      return newState;
+    }
+    case CREATE_EVENT: {
+      newState = { ...state };
+      newState.eventsList = [...newState.eventsList, action.event];
       return newState;
     }
     default:
       return state;
   }
-}
+};
 
 export default eventsReducer;

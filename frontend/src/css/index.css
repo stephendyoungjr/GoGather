@@ -231,24 +231,42 @@ button {
 }
 button.favorite-btn {
   position: absolute;
-  top: 10px; /* Adjust as necessary */
+  bottom: 10px; /* Position the button at the bottom right */
   right: 10px;
-  z-index: 2; /* Ensure it appears above other elements */
-  background: none;
+  z-index: 2; /* Ensure it appears above the image */
+  background: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
   border: none;
+  border-radius: 50%; /* Circle shape */
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
+
+
 button.favorite-btn .heart-icon {
-  font-size: 20px; /* Adjust size */
-  color: #d3d3d3; /* Default color */
+  font-size: 20px;
+  color: #d3d3d3; /* Default gray color */
   transition: color 0.3s ease;
+}
+
+
+button.favorite-btn:hover {
+  background: rgba(255, 255, 255, 1); /* Fully opaque on hover */
 }
 
 button.favorite-btn.favorited .heart-icon {
   color: #ff6b6b; /* Red for favorited state */
 }
 
+button.favorite-btn.favorited {
+  background: rgba(255, 102, 102, 0.8); /* Light red background for favorited state */
+}
 
 .nav-link {
   color: #195525;
@@ -278,7 +296,7 @@ button.favorite-btn.favorited .heart-icon {
   width: 100%;
   margin: 20px 0;
   padding: 10px 0;
-  background-color: #f8f8f8;
+  /* background-color: #f8f8f8; */
 }
 
 .category {
@@ -469,6 +487,7 @@ button.favorite-btn.favorited .heart-icon {
 }
 
 .search-bar-input {
+  align-items: center;
   width: 100%;
   background-color: #f8f7fa;
   border-radius: 0px;
@@ -521,4 +540,88 @@ button.favorite-btn.favorited .heart-icon {
 .event-card-link:focus {
   text-decoration: underline; /* Add underline on hover or focus */
   color: #234a63; /* Optional: Set hover/focus color */
+}
+
+.create-event-btn {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.create-event-btn:hover {
+  background-color: #45a049;
+}
+
+/* Style the form container */
+.create-event-form {
+  max-width: 600px; /* Set a maximum width for the form */
+  margin: 0 auto; /* Center the form horizontally */
+  padding: 20px;
+  background-color: #ffffff; /* Optional: Add a background color */
+  border: 1px solid #ddd; /* Optional: Add a border */
+  border-radius: 8px; /* Optional: Add rounded corners */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow */
+}
+
+
+/* Style each label */
+.create-event-form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Style each input and textarea field */
+.create-event-form .input-field,
+.create-event-form textarea,
+.create-event-form select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Style the submit button */
+.create-event-btn {
+  width: 100%;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  text-align: center;
+}
+
+/* Add hover effect for button */
+.create-event-btn:hover {
+  background-color: #45a049;
+}
+
+/* Optional: Add media query for responsiveness */
+@media (max-width: 768px) {
+  .create-event-form {
+    width: 90%;
+  }
+
+  .create-event-btn {
+    font-size: 14px;
+  }
+}
+
+.create-event-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Full viewport height */
+  background-color: #f5f5f5; /* Optional: Add a background color */
 }

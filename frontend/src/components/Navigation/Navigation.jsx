@@ -1,5 +1,6 @@
+/* Navigation.jsx */
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
 import LoginFormModal from '../LoginFormModal';
@@ -12,16 +13,32 @@ import logo from './logo.png';
 function Navigation({ isLoaded }) {
   const sessionUser = useSelector((state) => state.session.user);
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const logout = (e) => {
     e.preventDefault();
     dispatch(sessionActions.logout());
   };
 
+  const handleLogoClick = () => {
+    history.push('/', { resetCategory: true }); // Navigate to home and reset category
+  };
+
+  const handleCreateEventClick = () => {
+    history.push('/events/create'); // Navigate to Create Event page
+  };
+
   let sessionLinks;
   if (sessionUser) {
     sessionLinks = (
       <>
+        <button
+          className="create-event-btn"
+          onClick={handleCreateEventClick}
+          style={{ marginRight: '10px' }}
+        >
+          Create Event
+        </button>
         <NavLink className="nav-link" to="/profile">
           Profile
         </NavLink>
@@ -42,9 +59,13 @@ function Navigation({ isLoaded }) {
   return (
     <div className="nav">
       <div className="nav-bar-fixed">
-        <NavLink exact to="/">
-          <img alt="logo" className="logo" src={logo} />
-        </NavLink>
+        <img
+          alt="logo"
+          className="logo"
+          src={logo}
+          onClick={handleLogoClick}
+          style={{ cursor: 'pointer' }}
+        />
         <SearchForm />
       </div>
       <div></div>
@@ -54,3 +75,4 @@ function Navigation({ isLoaded }) {
 }
 
 export default Navigation;
+

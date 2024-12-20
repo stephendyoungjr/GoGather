@@ -145,4 +145,28 @@ router.delete(
   })
 );
 
+// Create an event
+router.post(
+  '/',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const { title, image, time, summary, ticketPrice, categoryId } = req.body;
+    const host = req.user.username; // Use logged-in user's username as the host
+
+    const newEvent = await Event.create({
+      title,
+      image: image || '/public/default-event-image.png', // Default image if none provided
+      host,
+      time,
+      summary,
+      ticketPrice,
+      categoryId,
+    });
+
+    console.log('Event created:', newEvent.toJSON());
+    res.status(201).json(newEvent);
+  })
+);
+
+
 module.exports = router;
