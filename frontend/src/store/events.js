@@ -1,4 +1,3 @@
-
 import { csrfFetch } from '../store/csrf';
 
 /* ACTION VERBS */
@@ -210,84 +209,76 @@ const initialState = {
 };
 
 const eventsReducer = (state = initialState, action) => {
-  let newState;
-
   switch (action.type) {
-    case LOAD_EVENTS: {
-      const allEvents = {};
-      action.events.forEach((event) => {
-        allEvents[event.id] = event;
-      });
+    case LOAD_EVENTS:
       return {
-        ...allEvents,
         ...state,
         eventsList: action.events,
       };
-    }
-    case LOAD_REGISTERED: {
+
+    case LOAD_REGISTERED:
       return {
         ...state,
         registered: action.registered,
       };
-    }
-    case LOAD_FAVORITES: {
+
+    case LOAD_FAVORITES:
       return {
         ...state,
         favorites: action.favorites,
       };
-    }
-    case LOAD_CREATED: {
+
+    case LOAD_CREATED:
       return {
         ...state,
         created: action.created,
       };
-    }
-    case LOAD_SEARCH_RESULTS: {
+
+    case LOAD_SEARCH_RESULTS:
       return {
         ...state,
         searchResults: action.results,
       };
-    }
-    case REGISTER: {
-      newState = { ...state };
-      newState.registered = [...newState.registered, action.event];
-      return newState;
-    }
-    case FAVORITE: {
-      newState = { ...state };
-      newState.favorites = [...newState.favorites, action.event];
-      return newState;
-    }
-    case UNREGISTER: {
-      newState = { ...state };
-      newState.registered = newState.registered.filter(
-        (event) => event.id !== action.eventId
-      );
-      return newState;
-    }
-    case UNFAVORITE: {
-      newState = { ...state };
-      newState.favorites = newState.favorites.filter(
-        (event) => event.id !== action.eventId
-      );
-      return newState;
-    }
-    case CREATE_EVENT: {
-      newState = { ...state };
-      newState.eventsList = [...newState.eventsList, action.event];
-      return newState;
-    }
-    case DELETE_EVENT: {
-      newState = { ...state };
-      newState.created = newState.created.filter(
-        (event) => event.id !== action.eventId
-      );
-      return newState;
-    }
+
+    case REGISTER:
+      return {
+        ...state,
+        registered: [...state.registered, action.event],
+      };
+
+    case FAVORITE:
+      return {
+        ...state,
+        favorites: [...state.favorites, action.event],
+      };
+
+    case UNREGISTER:
+      return {
+        ...state,
+        registered: state.registered.filter((event) => event.id !== parseInt(action.eventId, 10)),
+      };
+
+    case UNFAVORITE:
+      return {
+        ...state,
+        favorites: state.favorites.filter((event) => event.id !== parseInt(action.eventId, 10)),
+      };
+
+    case CREATE_EVENT:
+      return {
+        ...state,
+        created: [...state.created, action.event],
+      };
+
+    case DELETE_EVENT:
+      return {
+        ...state,
+        created: state.created.filter((event) => event.id !== parseInt(action.eventId, 10)),
+      };
+
     default:
       return state;
   }
 };
 
 export default eventsReducer;
-
