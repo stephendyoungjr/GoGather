@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 
-import { getRegistered, getFavorites } from '../../store/events';
+import { getRegistered, getFavorites, getCreatedEvents } from '../../store/events';
 import ProfileSettings from '../ProfileSettings/ProfileSettings';
 import ProfileEvents from '../ProfileEvents/ProfileEvents';
 
@@ -11,11 +11,13 @@ function ProfilePage() {
 
   const favorites = useSelector((state) => state.events.favorites);
   const registered = useSelector((state) => state.events.registered);
+  const created = useSelector((state) => state.events.created);
   const sessionUser = useSelector((state) => state.session.user);
 
   useEffect(() => {
     dispatch(getRegistered());
     dispatch(getFavorites());
+    dispatch(getCreatedEvents());
   }, [dispatch]);
 
   if (!sessionUser) return <Redirect to="/" />;
@@ -30,7 +32,11 @@ function ProfilePage() {
           />
         </div>
         <div className="profile-events-container">
-          <ProfileEvents registered={registered} favorites={favorites} />
+          <ProfileEvents
+            registered={registered}
+            favorites={favorites}
+            created={created}
+          />
         </div>
       </div>
     </div>

@@ -36,7 +36,7 @@ function MainPageEvents({ categories, events, user, favorites }) {
   return (
     <div className="events-container">
       <h2 className="events-title">
-        Popular in <span className="selected-category">{category}</span>
+        Popular in&nbsp;<span className="selected-category">{category}</span>
       </h2>
       <div className="category-bar">
         {extendedCategories.map((cat) => (

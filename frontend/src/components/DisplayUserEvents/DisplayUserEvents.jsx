@@ -14,7 +14,7 @@ function DisplayUserEvents({ events, remove, deleteText }) {
               deleteText={deleteText}
               event={event}
               time={time}
-              remove={remove}
+              remove={() => remove(event.id)} // Updated to pass event ID directly
             />
           );
         })}

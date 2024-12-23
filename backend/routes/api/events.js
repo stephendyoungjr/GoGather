@@ -1,6 +1,8 @@
 const router = require('express').Router();
 const asyncHandler = require('express-async-handler');
 const { Op } = require('sequelize');
+const fs = require('fs');
+const path = require('path');
 
 const { Event, Registration, Category, Favorite, User } = require('../../db/models');
 const { restoreUser, requireAuth } = require('../../utils/auth');
@@ -52,6 +54,36 @@ router.get(
     const favorites = userJoinData.Events;
     console.log('Favorite events for user:', favorites);
     res.json(favorites);
+  })
+);
+
+// Fetch created events
+router.get(
+  '/created',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const { user } = req;
+    const createdEvents = await Event.findAll({
+      where: { host: user.username },
+      include: [Category],
+    });
+    res.json(createdEvents);
+  })
+);
+
+// Fetch available images
+router.get(
+  '/images',
+  asyncHandler(async (req, res) => {
+    const imagesDir = path.join(__dirname, '../../public/images');
+    fs.readdir(imagesDir, (err, files) => {
+      if (err) {
+        console.error('Error reading images directory:', err);
+        return res.status(500).json({ error: 'Failed to load images.' });
+      }
+      const imagePaths = files.map((file) => `/public/images/${file}`);
+      res.json(imagePaths);
+    });
   })
 );
 
@@ -107,6 +139,34 @@ router.post(
   })
 );
 
+// Create an event
+router.post(
+  '/',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const { title, image, time, summary, ticketPrice, categoryId } = req.body;
+    const host = req.user.username; // Use logged-in user's username as the host
+
+    const newEvent = await Event.create({
+      title,
+      image: image || '/public/images/default.png', // Default image if none provided
+      host,
+      time,
+      summary,
+      ticketPrice,
+      categoryId,
+    });
+
+    // Fetch the created event along with its associated Category
+    const createdEvent = await Event.findByPk(newEvent.id, {
+      include: Category,
+    });
+
+    console.log('Event created:', createdEvent.toJSON());
+    res.status(201).json(createdEvent);
+  })
+);
+
 /* DELETE */
 
 // Unregister from an event
@@ -145,28 +205,27 @@ router.delete(
   })
 );
 
-// Create an event
-router.post(
-  '/',
+// Delete a created event
+router.delete(
+  '/:id',
   requireAuth,
   asyncHandler(async (req, res) => {
-    const { title, image, time, summary, ticketPrice, categoryId } = req.body;
-    const host = req.user.username; // Use logged-in user's username as the host
+    const { user } = req;
+    const eventId = req.params.id;
 
-    const newEvent = await Event.create({
-      title,
-      image: image || '/public/default-event-image.png', // Default image if none provided
-      host,
-      time,
-      summary,
-      ticketPrice,
-      categoryId,
-    });
+    const event = await Event.findByPk(eventId);
 
-    console.log('Event created:', newEvent.toJSON());
-    res.status(201).json(newEvent);
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found.' });
+    }
+
+    if (event.host !== user.username) {
+      return res.status(403).json({ message: 'Forbidden: Only the creator can delete this event.' });
+    }
+
+    await event.destroy();
+    res.json({ message: 'Event deleted successfully.', eventId });
   })
 );
-
 
 module.exports = router;

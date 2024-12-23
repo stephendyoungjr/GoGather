@@ -12,21 +12,21 @@
 }
 
 body {
-  background-color: #ffffff;
+  /* background-color: #ffffff; */
   font-family: "Josefin Sans", sans-serif;
   color: #39364F;
 }
 
 /* APP CONTAINER */
 .app-grid-container {
-  display: grid;
-  grid-template-columns: 1fr 1200px 1fr;
-  grid-template-rows: 70px 3fr 70px;
-  grid-template-areas: ". nav ." ". body ." ". foot .";
-  height: 100vh;
-  width: 100vw;
-}
+  display: flex;
+  flex-direction: column; /* Keep the default stacking of child elements */
+  align-items: center; /* Centers items horizontally */
+  justify-content: center; /* Centers items vertically */
+  min-height: 100vh; /* Ensures the container spans the full height of the viewport */
+  padding: 20px; /* Adds some padding */
 
+}
 .events-title {
   display: flex;
   justify-content: center;

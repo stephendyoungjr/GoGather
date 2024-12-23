@@ -1,21 +1,28 @@
-/* events.js */
+
 import { csrfFetch } from '../store/csrf';
 
 /* ACTION VERBS */
 const LOAD_EVENTS = 'events/LOAD_EVENTS';
 const LOAD_REGISTERED = 'events/LOAD_REGISTERED';
 const LOAD_FAVORITES = 'events/LOAD_FAVORITES';
+const LOAD_CREATED = 'events/LOAD_CREATED';
 const LOAD_SEARCH_RESULTS = 'events/LOAD_SEARCH_RESULTS';
 const REGISTER = 'events/REGISTER';
 const FAVORITE = 'events/FAVORITE';
 const UNREGISTER = 'events/UNREGISTER';
 const UNFAVORITE = 'events/UNFAVORITE';
 const CREATE_EVENT = 'events/CREATE_EVENT';
+const DELETE_EVENT = 'events/DELETE_EVENT';
 
 /* ACTION CREATORS */
 const createEvent = (event) => ({
   type: CREATE_EVENT,
   event,
+});
+
+const deleteEventAction = (eventId) => ({
+  type: DELETE_EVENT,
+  eventId,
 });
 
 const loadEvents = (events) => ({
@@ -31,6 +38,16 @@ const loadRegistered = (registered) => ({
 const loadFavorites = (favorites) => ({
   type: LOAD_FAVORITES,
   favorites,
+});
+
+const loadCreated = (created) => ({
+  type: LOAD_CREATED,
+  created,
+});
+
+const loadSearchResults = (results) => ({
+  type: LOAD_SEARCH_RESULTS,
+  results,
 });
 
 const register = (event) => ({
@@ -51,11 +68,6 @@ const unregister = (eventId) => ({
 const unfavorite = (eventId) => ({
   type: UNFAVORITE,
   eventId,
-});
-
-const loadSearchResults = (results) => ({
-  type: LOAD_SEARCH_RESULTS,
-  results,
 });
 
 /* GET THUNKS */
@@ -83,6 +95,15 @@ export const getFavorites = () => async (dispatch) => {
   if (response.ok) {
     const favorites = await response.json();
     dispatch(loadFavorites(favorites));
+  }
+};
+
+export const getCreatedEvents = () => async (dispatch) => {
+  const response = await fetch(`/api/events/created`);
+
+  if (response.ok) {
+    const created = await response.json();
+    dispatch(loadCreated(created));
   }
 };
 
@@ -168,11 +189,23 @@ export const unfavoriteEvent = (eventId) => async (dispatch) => {
   }
 };
 
+export const deleteEvent = (eventId) => async (dispatch) => {
+  const response = await csrfFetch(`/api/events/${eventId}`, {
+    method: 'DELETE',
+  });
+
+  if (response.ok) {
+    const { eventId: deletedId } = await response.json();
+    dispatch(deleteEventAction(deletedId));
+  }
+};
+
 /* EVENT REDUCER */
 const initialState = {
   eventsList: [],
   registered: [],
   favorites: [],
+  created: [],
   searchResults: [],
 };
 
@@ -203,6 +236,12 @@ const eventsReducer = (state = initialState, action) => {
         favorites: action.favorites,
       };
     }
+    case LOAD_CREATED: {
+      return {
+        ...state,
+        created: action.created,
+      };
+    }
     case LOAD_SEARCH_RESULTS: {
       return {
         ...state,
@@ -211,35 +250,38 @@ const eventsReducer = (state = initialState, action) => {
     }
     case REGISTER: {
       newState = { ...state };
-      const newRegistered = [...newState.registered, action.event];
-      newState.registered = newRegistered;
+      newState.registered = [...newState.registered, action.event];
       return newState;
     }
     case FAVORITE: {
       newState = { ...state };
-      const newFavorites = [...newState.favorites, action.event];
-      newState.favorites = newFavorites;
+      newState.favorites = [...newState.favorites, action.event];
       return newState;
     }
     case UNREGISTER: {
       newState = { ...state };
-      const newRegistered = newState.registered.filter(
-        (event) => event.id.toString() !== action.eventId.toString()
+      newState.registered = newState.registered.filter(
+        (event) => event.id !== action.eventId
       );
-      newState.registered = newRegistered;
       return newState;
     }
     case UNFAVORITE: {
       newState = { ...state };
-      const newFavorites = newState.favorites.filter(
-        (event) => event.id.toString() !== action.eventId.toString()
+      newState.favorites = newState.favorites.filter(
+        (event) => event.id !== action.eventId
       );
-      newState.favorites = newFavorites;
       return newState;
     }
     case CREATE_EVENT: {
       newState = { ...state };
       newState.eventsList = [...newState.eventsList, action.event];
+      return newState;
+    }
+    case DELETE_EVENT: {
+      newState = { ...state };
+      newState.created = newState.created.filter(
+        (event) => event.id !== action.eventId
+      );
       return newState;
     }
     default:
@@ -248,3 +290,4 @@ const eventsReducer = (state = initialState, action) => {
 };
 
 export default eventsReducer;
+
