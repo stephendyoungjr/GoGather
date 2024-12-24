@@ -13,197 +13,126 @@
 
 [wireframe]: ./images/wireframe.png
 ---
+# GoGather Application
 
-## API Documentation
-
-### Authentication
-- **POST** `/auth/signup`  
-  Register a new user.
-
-  ```json
-  {
-    "username": "johndoe",
-    "email": "johndoe@example.com",
-    "password": "securepassword"
-  }
-  ```
-
-- **POST** `/auth/login`  
-  Authenticate a user and return a token.
-
-  ```json
-  {
-    "credential": "johndoe@example.com",
-    "password": "securepassword"
-  }
-  ```
-
-- **POST** `/auth/logout`  
-  Log out the user and invalidate their session.
-
-- **GET** `/auth/session`  
-  Get details of the currently logged-in user.
+GoGather is an interactive web application where users can explore, create, register, favorite, and search for events. It features a robust event management system, including full CRUD (Create, Read, Update, Delete) functionality for events and registrations, as well as partial CRUD for favorites. The application also includes a dynamic search bar and category filters for better navigation.
 
 ---
 
-### Events
-- **GET** `/events?category=:category`  
-  Fetch events from Eventbrite API filtered by category.
+## Features
 
----
+### Event Management
+- **Full CRUD**:
+  - Create new events with details such as title, time, summary, ticket price, and category.
+  - Read event details, including category information.
+  - Update event information (host only).
+  - Delete created events (host only).
+
+### Registration Management
+- **Full CRUD**:
+  - Register for events.
+  - View registered events.
+  - Unregister from events.
 
 ### Favorites
-- **GET** `/favorites`  
-  Retrieve the current user’s saved favorites.
+- **Partial CRUD**:
+  - Favorite events.
+  - View favorite events.
+  - Remove events from favorites.
 
-- **POST** `/favorites`  
-  Save a new favorite for the user.
-  ```json
-  {
-    "place_id": "ChIJN1t_tDeuEmsRUsoyG83frY4",
-    "name": "Sydney Opera House",
-    "category": "Landmark",
-    "notes": "Great view during sunset."
-  }
-  ```
-
-- **DELETE** `/favorites/:id`  
-  Remove a favorite by its ID.
-
----
-
-### Reviews
-- **GET** `/reviews/current`  
-  Retrieve all reviews written by the current user.
-
-- **GET** `/reviews/:place_id`  
-  Get all reviews for a specific event or place.
-
-- **POST** `/reviews`  
-  Submit a new review.
-  ```json
-  {
-    "place_id": "ChIJN1t_tDeuEmsRUsoyG83frY4",
-    "rating": 5,
-    "comment": "Amazing experience!"
-  }
-  ```
-
-- **PUT** `/reviews/:id`  
-  Edit an existing review by its ID.
-  ```json
-  {
-    "rating": 4,
-    "comment": "Still great, but crowded."
-  }
-  ```
-
-- **DELETE** `/reviews/:id`  
-  Remove a review by its ID.
-
----
-
-### Itineraries
-- **GET** `/itineraries`  
-  Get all itineraries for the current user.
-
-- **POST** `/itineraries`  
-  Create a new itinerary.
-  ```json
-  {
-    "name": "Vacation to Sydney",
-    "date": "2024-12-25"
-  }
-  ```
-
-- **PUT** `/itineraries/:id`  
-  Update an existing itinerary.
-  ```json
-  {
-    "name": "Sydney Getaway",
-    "date": "2024-12-26"
-  }
-  ```
-
-- **DELETE** `/itineraries/:id`  
-  Delete an itinerary by its ID.
-
----
-
-### Itinerary Items
-- **GET** `/itineraries/:itineraryId/items`  
-  Retrieve all items for a specific itinerary.
-
-- **POST** `/itineraries/:itineraryId/items`  
-  Add a new item to an itinerary.
-  ```json
-  {
-    "place_id": "ChIJN1t_tDeuEmsRUsoyG83frY4",
-    "name": "Sydney Opera House",
-    "start_time": "18:00:00",
-    "end_time": "20:00:00"
-  }
-  ```
-
-- **PUT** `/itinerary-items/:id`  
-  Edit an itinerary item.
-  ```json
-  {
-    "name": "Sydney Opera House Tour",
-    "start_time": "19:00:00",
-    "end_time": "21:00:00"
-  }
-  ```
-
-- **DELETE** `/itinerary-items/:id`  
-  Remove an itinerary item.
-
----
-
-## Feature List / MVP List
+### Search and Filtering
+- **Dynamic Search**: Search for events by title.
+- **Category Tab**: Browse events by categories.
 
 ### User Authentication
-- Users can sign up, log in, and log out.
-- Secure password handling with hashing.
-
-### Search for Events and Places
-- Allow users to search for events by category (e.g., food, entertainment, outdoors).
-- Fetch event details using the Eventbrite API.
-
-### Favorites Management
-- Users can save places or events to their favorites.
-- Include notes for saved favorites.
-
-### Reviews
-- Users can leave reviews for events or places with ratings and comments.
-- Display an average rating for each event/place based on user reviews.
-
-### Itineraries
-- Users can create, view, and manage itineraries.
-- Add events/places to itineraries with specific start and end times.
-
-### Interactive Itinerary
-- Visualize itinerary items with start/end times clearly displayed.
+- Secure user authentication using sessions.
+- Login, signup, and logout functionality.
 
 ---
 
-## User Stories
+## API Endpoints
 
-1. **As a user, I want to:**
-   - Create an account to save my preferences and activities.
-   - Log in to view my saved favorites and itineraries.
+### Events
 
-2. **As a user, I want to:**
-   - Search for local events and places based on categories.
-   - View details like event time, location, and reviews.
+#### GET Endpoints
+- **`/api/events/`**: Fetch all events (includes categories).
+- **`/api/events/registrations`**: Fetch all events the user is registered for.
+- **`/api/events/favorites`**: Fetch all events the user has favorited.
+- **`/api/events/created`**: Fetch all events created by the logged-in user.
+- **`/api/events/images`**: Fetch all available event images.
 
-3. **As a user, I want to:**
-   - Add events/places to my favorites for future reference.
-   - Write reviews for events/places I have attended.
+#### POST Endpoints
+- **`/api/events/:id/registration`**: Register for an event by ID (requires ticket count).
+- **`/api/events/:id/favorite`**: Favorite an event by ID.
+- **`/api/events/search`**: Search for events by title.
+- **`/api/events/`**: Create a new event.
 
-4. **As a user, I want to:**
-   - Plan my day by creating itineraries with specific timings for activities.
-   - Share my itinerary with friends.
+#### DELETE Endpoints
+- **`/api/events/:id/registration`**: Unregister from an event by ID.
+- **`/api/events/:id/favorites`**: Remove an event from favorites by ID.
+- **`/api/events/:id`**: Delete an event by ID (host only).
 
-5. **As a user, I want to:**
-   - Manage my reviews and favorites easily from my profile page.
+### Session
+
+#### GET Endpoints
+- **`/api/session/`**: Restore the session for the logged-in user.
+
+#### POST Endpoints
+- **`/api/session/`**: Log in using credentials (email or username).
+
+#### DELETE Endpoints
+- **`/api/session/`**: Log out the current session.
+
+### Users
+
+#### POST Endpoints
+- **`/api/users/`**: Sign up for a new account.
+
+### Static Routes
+- Serve the React frontend in production for both static assets and dynamic routing.
+
+---
+
+## Installation and Setup
+
+1. **Clone the Repository**:
+   ```bash
+   git clone <repository_url>
+   cd GoGather
+   ```
+
+2. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
+
+3. **Set Up Environment Variables**:
+   - Create a `.env` file in the root directory.
+   - Add required environment variables as specified in `.env.example`.
+
+4. **Database Setup**:
+   - Run migrations: `npx sequelize-cli db:migrate`
+   - Seed the database: `npx sequelize-cli db:seed:all`
+
+5. **Start the Server**:
+   ```bash
+   npm start
+   ```
+
+6. **Access the Application**:
+   - Navigate to `http://localhost:3000` in your browser.
+
+---
+
+## Technologies Used
+- **Frontend**: React.js
+- **Backend**: Node.js, Express.js
+- **Database**: PostgreSQL with Sequelize ORM
+- **Authentication**: Secure sessions with cookies
+
+---
+
+## Future Enhancements
+- Enhance search functionality to include filters like date and location.
+- Add user profiles to display activity history and created events.
+- Introduce event recommendations based on user interests.
