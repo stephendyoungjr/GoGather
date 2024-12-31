@@ -233,4 +233,21 @@ router.delete(
   })
 );
 
+router.put(
+  '/:id',
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const { title, image, time, summary, ticketPrice, categoryId } = req.body;
+
+    const event = await Event.findByPk(id);
+    if (!event) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    await event.update({ title, image, time, summary, ticketPrice, categoryId });
+    return res.json(event);
+  })
+);
+
+
 module.exports = router;

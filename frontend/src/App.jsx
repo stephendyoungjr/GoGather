@@ -8,6 +8,7 @@ import EventPage from './components/EventPage/EventPage';
 import SearchPage from './components/SearchPage/SearchPage';
 import ProfilePage from './components/ProfilePage/ProfilePage';
 import CreateEventForm from './components/CreateEventForm/CreateEventForm';
+import UpdateEventForm from './components/UpdateEventForm/UpdateEventForm'; // Import UpdateEventForm
 import Footer from './components/Footer/Footer';
 
 import './css/index.css';
@@ -53,6 +54,13 @@ function App() {
             <div className="app-grid-container">
               <Navigation isLoaded={isLoaded} />
               <CreateEventForm categories={categories} />
+              <Footer />
+            </div>
+          </Route>
+          <Route path="/events/:eventId/edit">
+            <div className="app-grid-container">
+              <Navigation isLoaded={isLoaded} />
+              <UpdateEventForm categories={categories} />
               <Footer />
             </div>
           </Route>

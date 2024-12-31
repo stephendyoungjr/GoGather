@@ -165,6 +165,22 @@ export const createNewEvent = (payload) => async (dispatch) => {
   }
 };
 
+/* PUT THUNK */
+export const updateEvent = (payload) => async (dispatch) => {
+  const response = await csrfFetch(`/api/events/${payload.id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+
+  if (response.ok) {
+    const updatedEvent = await response.json();
+    dispatch(createEvent(updatedEvent)); // Use createEvent to update the store
+    return updatedEvent;
+  }
+};
+
+
 /* DELETE THUNKS */
 export const unregisterEvent = (eventId) => async (dispatch) => {
   const response = await csrfFetch(`/api/events/${eventId}/registration`, {
