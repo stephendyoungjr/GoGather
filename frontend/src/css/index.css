@@ -189,7 +189,7 @@ body {
   justify-content: flex-start;
   align-items: flex-start;
   overflow-y: scroll;
-  max-height: 300px;
+  max-height: 150px;
   width: 50vw;
 }
 
